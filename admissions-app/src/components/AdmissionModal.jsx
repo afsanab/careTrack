@@ -66,7 +66,7 @@ export default function AdmissionModal({ admission, onSave, onClose }) {
           {admission ? "Edit Admission" : "New Admission"}
         </div>
         <button type="button" disabled={saving} aria-label="Close admission form" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 7, border: `1px solid ${C.border}`, background: C.bg, cursor: saving ? "default" : "pointer", fontSize: 16, color: C.muted }}>
-          <span aria-hidden="true">✕</span>
+          <span aria-hidden="true">X</span>
         </button>
       </div>
       <div className="ct-modal__body" style={{ padding: "16px 20px" }}>

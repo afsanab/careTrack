@@ -88,7 +88,7 @@ export default function InviteStaffModal({ onClose, onCreated }) {
           Invite staff
         </div>
         <button type="button" aria-label="Close invitation dialog" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 7, border: `1px solid ${C.border}`, background: C.bg, cursor: "pointer", fontSize: 16, color: C.muted }}>
-          <span aria-hidden="true">✕</span>
+          <span aria-hidden="true">X</span>
         </button>
       </div>
       <div className="ct-modal__body" style={{ padding: "16px 20px 20px" }}>

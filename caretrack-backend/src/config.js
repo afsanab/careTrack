@@ -28,7 +28,10 @@ const Schema = z.object({
   PORT: z.coerce.number().int().positive().default(3001),
 
   // ── Database ──
-  DATABASE_URL: z.string().min(1).optional(),
+  DATABASE_URL: z.preprocess(
+    (val) => (val === "" ? undefined : val),
+    z.string().min(1).optional()
+  ),
   DB_HOST: z.string().optional(),
   DB_PORT: z.coerce.number().int().positive().optional(),
   DB_NAME: z.string().optional(),

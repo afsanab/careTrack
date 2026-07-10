@@ -39,7 +39,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
           </div>
         </div>
         <button type="button" aria-label="Close task panel" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.08)", cursor: "pointer", fontSize: 16, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span aria-hidden="true">✕</span>
+          <span aria-hidden="true">X</span>
         </button>
       </div>
 
@@ -114,7 +114,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
                   }}
                   aria-hidden="true"
                 >
-                  {task.status === "completed" ? "✓" : isOverdue ? "!" : isDueSoon ? "!" : "●"}
+                  {task.status === "completed" ? "OK" : isOverdue ? "!" : isDueSoon ? "!" : "--"}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div
@@ -208,7 +208,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
                   onClick={() => runMutation(() => onAssign(admission.id, task.id, true))}
                   style={{ padding: "13px 16px", background: C.redLight, color: C.red, border: `1.5px solid ${C.red}`, borderRadius: 10, fontFamily: "inherit", fontSize: 13, fontWeight: 700, cursor: busy ? "default" : "pointer", opacity: busy ? 0.7 : 1 }}
                 >
-                  {busy ? "Working…" : "✕ Unassign"}
+                  {busy ? "Working…" : "Unassign"}
                 </button>
               )}
               {isPhysician && task.assignedAt && task.status !== "completed" && (

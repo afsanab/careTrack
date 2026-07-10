@@ -20,7 +20,7 @@ export default function TaskPills({ activeTasks }) {
             bg = C.greenLight;
             border = C.greenBorder;
             textColor = C.green;
-            iconEl = "✓";
+            iconEl = "OK";
             dueLabel = "Complete";
           } else if (isOver) {
             bg = "#fff0ee";
@@ -38,13 +38,13 @@ export default function TaskPills({ activeTasks }) {
             bg = C.yellowLight;
             border = C.yellowBorder;
             textColor = "#7a4f08";
-            iconEl = "●";
+            iconEl = "--";
             dueLabel = `Due ${fmtDate(t.dueDate)}`;
           } else {
             bg = "#f4f1ec";
             border = C.border;
             textColor = C.muted;
-            iconEl = "○";
+            iconEl = "o";
             dueLabel = `Due ${fmtDate(t.dueDate)}`;
           }
 

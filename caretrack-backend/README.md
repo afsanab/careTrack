@@ -155,10 +155,10 @@ az postgres flexible-server create \
 ```
 
 **Important settings to verify in the Azure portal:**
-- ✅ SSL enforcement: **Required**
-- ✅ Backup retention: **35 days** (HIPAA recommends 6 years — configure long-term backup separately)
-- ✅ Private endpoint or VNet integration: **Enabled**
-- ✅ Azure Defender for PostgreSQL: **Enabled**
+- SSL enforcement: **Required**
+- Backup retention: **35 days** (HIPAA recommends 6 years — configure long-term backup separately)
+- Private endpoint or VNet integration: **Enabled**
+- Azure Defender for PostgreSQL: **Enabled**
 
 ### Step 2: Create Azure Key Vault
 
@@ -445,7 +445,7 @@ Key points if you build your own client:
 
 ## HIPAA Compliance Checklist
 
-### ✅ Implemented in this backend
+### Implemented in this backend
 - [x] All PHI access/modification events are audit-logged (who, what, when, from where)
 - [x] Role-based access control enforced server-side (not just in the UI)
 - [x] Physicians scoped to their own patients server-side
@@ -460,7 +460,7 @@ Key points if you build your own client:
 - [x] Soft-delete for discharged patients — records are retained (`discharged_at` set, filtered from all active queries), not hard-deleted, so PHI is preserved per HIPAA. A UI/endpoint to *view* discharged records is not yet built (see `PROD_READINESS.md`).
 - [x] Audit logs shipped to Azure Blob Storage with immutability policy
 
-### 🔲 Required before production go-live
+### Required before production go-live
 - [ ] Sign a Business Associate Agreement (BAA) with Microsoft Azure
 - [ ] Sign a BAA with any other vendors (email, SMS notification providers, etc.)
 - [ ] Enable Azure Defender for PostgreSQL

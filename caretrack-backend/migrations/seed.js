@@ -71,7 +71,7 @@ async function seed() {
         [id, u.username, hash, u.fullName, u.role]
       );
       userIds[u.username] = id;
-      console.log(`  ✓ ${u.role.padEnd(10)} ${u.username}`);
+      console.log(`  * ${u.role.padEnd(10)} ${u.username}`);
     }
 
     console.log("\nSeeding patients...");
@@ -143,7 +143,7 @@ async function seed() {
         p.diagnosis, p.notes, p.status, p.admitTs, p.physician, p.location, adminId]
       );
       patientIds[`${p.lastName}`] = p.id;
-      console.log(`  ✓ ${p.status.padEnd(10)} ${p.lastName}, ${p.firstName}`);
+      console.log(`  * ${p.status.padEnd(10)} ${p.lastName}, ${p.firstName}`);
     }
 
     console.log("\nSeeding tasks for in-house patients...");
@@ -168,7 +168,7 @@ async function seed() {
         new Date(ADMIT_25_DAYS_AGO.getTime() + 30 * 86400000),
         new Date(ADMIT_25_DAYS_AGO.getTime() + 21 * 86400000)]
       );
-      console.log("  ✓ Rivera tasks seeded");
+      console.log("  * Rivera tasks seeded");
     }
 
     // Thompson (2 days): H&P completed
@@ -184,7 +184,7 @@ async function seed() {
         new Date(ADMIT_2_DAYS_AGO.getTime() + 3600000),
         new Date(ADMIT_2_DAYS_AGO.getTime() + 86400000)]
       );
-      console.log("  ✓ Thompson tasks seeded");
+      console.log("  * Thompson tasks seeded");
     }
 
     // Garcia (3 days): H&P assigned, pending
@@ -199,10 +199,10 @@ async function seed() {
           ADMIT_3_DAYS_AGO,
         new Date(ADMIT_3_DAYS_AGO.getTime() + 3600000)]
       );
-      console.log("  ✓ Garcia tasks seeded");
+      console.log("  * Garcia tasks seeded");
     }
 
-    console.log("\n✅ Seed complete!\n");
+    console.log("\nSeed complete!\n");
     console.log("Demo users: dr.smith, dr.patel, admin, j.garcia — password is SEED_DEMO_PASSWORD from .env (not echoed here).");
 
   } finally {
