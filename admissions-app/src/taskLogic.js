@@ -1,10 +1,10 @@
 // Shared task timeline logic (matches backend task_key / cycle)
 
-export function addDays(ts, days) {
+function addDays(ts, days) {
   return ts + days * 86400000;
 }
 
-export function daysSince(ts) {
+function daysSince(ts) {
   return Math.floor((Date.now() - ts) / 86400000);
 }
 

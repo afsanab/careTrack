@@ -26,12 +26,7 @@ export default function AcceptInviteScreen({ inviteToken, onRegistered }) {
       try {
         const data = await auth.inviteInfo(inviteToken.trim());
         if (cancelled) return;
-        setInfo({
-          username: data.username,
-          role: data.role,
-          email: data.email ?? null,
-          expiresAt: data.expiresAt,
-        });
+        setInfo({ username: data.username, role: data.role });
       } catch (e) {
         if (!cancelled) setError(e.message || "Invitation could not be loaded.");
       } finally {

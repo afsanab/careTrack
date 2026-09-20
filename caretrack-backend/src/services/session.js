@@ -60,4 +60,4 @@ function clearSessionCookies(res) {
   res.clearCookie(env.CSRF_COOKIE_NAME, opts);
 }
 
-module.exports = { signSessionJwt, setSessionCookies, clearSessionCookies };
+module.exports = { setSessionCookies, clearSessionCookies };

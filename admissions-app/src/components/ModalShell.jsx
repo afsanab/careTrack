@@ -13,7 +13,6 @@ export default function ModalShell({
   overlayClassName = "",
   style,
   overlayStyle,
-  zIndex,
 }) {
   const panelRef = useRef(null);
   useModalA11y(true, panelRef, onBackdropClick);
@@ -21,7 +20,7 @@ export default function ModalShell({
   return (
     <div
       className={overlayClassName || "ct-modal-overlay"}
-      style={zIndex != null ? { zIndex, ...overlayStyle } : overlayStyle}
+      style={overlayStyle}
       onClick={onBackdropClick}
       role="presentation"
     >

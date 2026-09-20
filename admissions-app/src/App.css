@@ -345,12 +345,6 @@
   }
 }
 
-/* ── Task panel header rows ── */
-.ct-task-tabs {
-  display: flex;
-  min-width: max-content;
-}
-
 /* ── Footer button row in cards ── */
 .ct-card-footer {
   display: flex;

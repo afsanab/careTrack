@@ -71,4 +71,4 @@ function csrfProtect(req, res, next) {
   next();
 }
 
-module.exports = { requireAuth, requireRole, csrfProtect, extractToken };
+module.exports = { requireAuth, requireRole, csrfProtect };

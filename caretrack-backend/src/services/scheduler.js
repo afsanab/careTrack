@@ -161,10 +161,4 @@ function stopScheduledJobs() {
   jobs.length = 0;
 }
 
-module.exports = {
-  startScheduledJobs,
-  stopScheduledJobs,
-  runTaskGeneration,
-  runAuditRetentionPurge,
-  runLoginAttemptsPurge,
-};
+module.exports = { startScheduledJobs, stopScheduledJobs };

@@ -2,8 +2,6 @@
 
 A HIPAA-compliant clinical workflow system for managing patient admissions and physician tasks in skilled nursing facilities.
 
-**Status:** Core functionality complete with HIPAA security measures implemented. See [`PROD_READINESS.md`](./PROD_READINESS.md) for production deployment checklist.
-
 ---
 
 ## Project Structure
@@ -13,7 +11,7 @@ careTrack/
 ├── admissions-app/        # React frontend (Vite)
 ├── caretrack-backend/     # Node.js API (Express + Postgres)
 ├── .github/workflows/     # CI/CD pipelines
-└── docs/                  # Deployment guides
+└── docs/                  # Deployment guide
 ```
 
 ---
@@ -54,7 +52,7 @@ npm run dev              # Starts on http://localhost:5173
 **Testing:** Vitest  
 **Validation:** Zod schemas  
 **Audit Logging:** Winston → file + database + optional Azure Blob  
-**Deployment:** Azure App Service + Azure Static Web Apps
+**Deployment:** Azure Container Apps + Azure Static Web Apps
 
 ---
 
@@ -100,24 +98,3 @@ Automated workflows run on every push:
 - **CI:** Lint, test, build, security audit (Node 20 & 22)
 - **CD:** Manual deploy to Azure (backend + frontend)
 
----
-
-## Production Deployment
-
-Before deploying to production:
-
-1. **Legal & Compliance**
-   - Sign Business Associate Agreements (BAAs) with cloud vendors
-   - Complete HIPAA Security Rule risk analysis documentation
-
-2. **Infrastructure**
-   - Provision Azure resources (App Service, Database, VNet)
-   - Configure Azure Key Vault for secrets management
-   - Set up private VNet for database access
-
-3. **Security**
-   - Rotate all secrets and API keys
-   - Implement MFA (data model ready, UI flow needed)
-   - Configure audit log retention (7 years for HIPAA)
-
-See [`PROD_READINESS.md`](./PROD_READINESS.md) for the complete checklist.

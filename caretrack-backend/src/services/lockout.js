@@ -1,9 +1,10 @@
 /**
  * Per-account login lockout.
  *
- * Strategy: a sliding window of N failed attempts within W minutes triggers
- * a lockout for D minutes. Recorded both on the `users` row (fast read) and
- * the `login_attempts` table (full audit history for the security team).
+ * Strategy: N consecutive failed attempts (LOCKOUT_MAX_ATTEMPTS) lock the
+ * account for D minutes (LOCKOUT_DURATION_MIN). The counter resets on a
+ * successful login. Recorded both on the `users` row (fast read) and the
+ * `login_attempts` table (full audit history for the security team).
  */
 
 const env = require("../config");
@@ -57,7 +58,6 @@ async function registerFailure(username) {
   return {
     locked: !!(result.rows[0]?.locked_until && new Date(result.rows[0].locked_until) > new Date()),
     until: result.rows[0]?.locked_until,
-    attempts: result.rows[0]?.failed_login_attempts,
   };
 }
 

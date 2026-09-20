@@ -114,7 +114,6 @@ const ResetPassword = z.object({
 });
 
 module.exports = {
-  UUID,
   IdParam,
   PatientIdParam,
   PatientAndTaskIdParam,

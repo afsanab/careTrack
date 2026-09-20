@@ -75,4 +75,4 @@ async function shutdown() {
   await pool.end();
 }
 
-module.exports = { pool, query, withTransaction, ping, shutdown };
+module.exports = { query, withTransaction, ping, shutdown };

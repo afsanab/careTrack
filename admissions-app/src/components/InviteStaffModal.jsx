@@ -4,7 +4,7 @@ import Label from "./Label.jsx";
 import ModalShell from "./ModalShell.jsx";
 import { C } from "../theme/colors.js";
 
-export default function InviteStaffModal({ onClose, onCreated }) {
+export default function InviteStaffModal({ onClose }) {
   const titleId = useId();
   const usernameFieldId = useId();
   const roleSelectId = useId();
@@ -61,7 +61,6 @@ export default function InviteStaffModal({ onClose, onCreated }) {
         email: email.trim() || undefined,
       });
       setResult(data);
-      onCreated?.();
     } catch (e) {
       setError(e.message || "Could not create invitation.");
     } finally {

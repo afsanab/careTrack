@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import {
   loadPatientsAndTasks,
@@ -137,7 +137,6 @@ export default function App() {
   if (!user) return <AuthScreen onLogin={handleLogin} />;
 
   const canEdit = user.role === "admin";
-  const canAdd = true;
   const physicianList = [...new Set(admissions.map(a => a.physician).filter(Boolean))].sort();
   const locationList = [...new Set(admissions.map(a => a.location).filter(Boolean))].sort();
 
@@ -422,7 +421,7 @@ export default function App() {
               </select>
             )}
             {canEdit && locationList.length > 0 && (
-              <select value={locationFilter} aria-label={canEdit ? "Filter by location" : "Filter by facility"} onChange={e => setLocationFilter(e.target.value)}
+              <select value={locationFilter} aria-label="Filter by location" onChange={e => setLocationFilter(e.target.value)}
                 style={{ padding: "8px 14px", borderRadius: 20, border: `1.5px solid ${locationFilter !== "all" ? C.blue : C.border}`, background: locationFilter !== "all" ? C.blueLight : C.surface, color: locationFilter !== "all" ? C.blue : C.muted, fontFamily: "inherit", fontSize: 14, fontWeight: 600, cursor: "pointer", outline: "none", minHeight: 40, appearance: "none", paddingRight: 32, backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7570' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center" }}>
                 <option value="all">All Locations</option>
                 {locationList.map(l => <option key={l} value={l}>{l}</option>)}
@@ -430,15 +429,13 @@ export default function App() {
             )}
           </div>
           {!canEdit && locationList.length > 0 && (
-            <select value={locationFilter} aria-label={canEdit ? "Filter by location" : "Filter by facility"} onChange={e => setLocationFilter(e.target.value)}
+            <select value={locationFilter} aria-label="Filter by facility" onChange={e => setLocationFilter(e.target.value)}
               style={{ padding: "8px 14px", borderRadius: 20, border: `1.5px solid ${locationFilter !== "all" ? C.blue : C.border}`, background: locationFilter !== "all" ? C.blueLight : C.surface, color: locationFilter !== "all" ? C.blue : C.muted, fontFamily: "inherit", fontSize: 14, fontWeight: 600, cursor: "pointer", outline: "none", minHeight: 40, appearance: "none", paddingRight: 32, backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237a7570' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E")`, backgroundRepeat: "no-repeat", backgroundPosition: "right 12px center", alignSelf: "flex-start" }}>
               <option value="all">All Facilities</option>
               {locationList.map(l => <option key={l} value={l}>{l}</option>)}
             </select>
           )}
-          {canAdd && (
-            <button type="button" onClick={() => setModal({ type: "add" })} style={{ width: "100%", padding: "12px", background: C.blue, color: "#fff", border: "none", borderRadius: 10, fontFamily: "inherit", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>+ New Admission</button>
-          )}
+          <button type="button" onClick={() => setModal({ type: "add" })} style={{ width: "100%", padding: "12px", background: C.blue, color: "#fff", border: "none", borderRadius: 10, fontFamily: "inherit", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>+ New Admission</button>
         </div>
 
         <div className="ct-cards">
@@ -493,10 +490,7 @@ export default function App() {
       )}
 
       {inviteModal && (
-        <InviteStaffModal
-          onClose={() => setInviteModal(false)}
-          onCreated={() => { }}
-        />
+        <InviteStaffModal onClose={() => setInviteModal(false)} />
       )}
 
       {showPwModal && (

@@ -37,10 +37,10 @@ Items prefixed with **(code)** are in source control; items prefixed with
       Referrer-Policy, Permissions-Policy.
 - [x] **(code)** GitHub Actions CI: lint + test + build + `npm audit` for
       both packages on Node 20 and 22.
-- [x] **(code)** GitHub Actions CD scaffolding: `deploy-backend.yml`
-      (App Service) and `deploy-frontend.yml` (Static Web Apps),
-      manually-triggered until secrets are wired and the `push` trigger is
-      enabled.
+- [x] **(code)** GitHub Actions CD scaffolding: `deploy-containerapp.yml`
+      (Container Apps), `deploy-backend.yml` (App Service) and
+      `deploy-frontend.yml` (Static Web Apps), manually-triggered until secrets
+      are wired and the `push` trigger is enabled.
 - [x] **(code)** Production `Dockerfile` for the API (Node 20, non-root user,
       healthcheck) + `.dockerignore`.
 - [x] **(code)** Production-safe first-admin bootstrap (`npm run create-admin`)
@@ -57,30 +57,33 @@ Items prefixed with **(code)** are in source control; items prefixed with
 - [ ] **(ops)** Rotate the live database credentials (e.g. managed Postgres).
 - [ ] **(ops)** Rotate the live Resend API key.
 - [ ] **(ops)** Regenerate `JWT_SECRET` (64 bytes hex).
-- [ ] **(ops)** Store the new values in **Azure Key Vault**; reference from
-      App Service settings with `@Microsoft.KeyVault(VaultName=…;SecretName=…)`.
-      Step-by-step for this repo: [docs/Azure-KeyVault-App-Service.md](docs/Azure-KeyVault-App-Service.md).
+- [ ] **(ops)** Store the new values in **Azure Key Vault** and grant the app's
+      managed identity read access. Rotation steps:
+      [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#secret-rotation).
 
 ### Azure infrastructure
 
+Provisioning commands: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+
 - [ ] **(ops)** Create Azure Database for PostgreSQL Flexible Server with
       SSL required and public access disabled.
-- [ ] **(ops)** Create App Service with Managed Identity granted read on
+- [ ] **(ops)** Create the Container App with Managed Identity granted read on
       Key Vault.
 - [ ] **(ops)** Private endpoints for Postgres and Blob Storage; VNet
-      integration on App Service.
+      integration on the Container Apps environment.
 - [ ] **(ops)** Create the Blob container `caretrack-audit-logs` with a
       7-year immutability policy.
 - [ ] **(ops)** Enable Azure Defender for PostgreSQL.
 - [ ] **(ops)** Configure Azure Monitor alerts: failed login spikes,
       account lockouts, 5xx rate, DB CPU > 80%, blob shipping failures.
 - [ ] **(ops)** Set `ALLOWED_ORIGINS` to the production SWA URL only.
+- [ ] **(ops)** Set `APP_PUBLIC_URL` to the production SWA URL — the API
+      refuses to boot in production without it.
 - [ ] **(ops)** Create the first admin against the production DB with
       `npm run create-admin` (see `caretrack-backend/README.md`), then invite
       the rest of the team from the UI.
-- [ ] **(ops)** Wire the CD workflow secrets (`AZURE_WEBAPP_PUBLISH_PROFILE`,
-      `AZURE_STATIC_WEB_APPS_API_TOKEN`) and variables (`AZURE_WEBAPP_NAME`,
-      `VITE_API_BASE`), then enable the `push` trigger if you want auto-deploy.
+- [ ] **(ops)** Wire the CD workflow secrets and variables, then enable the
+      `push` trigger if you want auto-deploy.
 
 ### HIPAA paperwork
 

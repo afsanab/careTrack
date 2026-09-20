@@ -53,7 +53,6 @@ const Schema = z.object({
 
   // ── Lockout ──
   LOCKOUT_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
-  LOCKOUT_WINDOW_MIN: z.coerce.number().int().positive().default(15),
   LOCKOUT_DURATION_MIN: z.coerce.number().int().positive().default(15),
 
   // ── CORS ──

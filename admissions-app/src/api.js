@@ -67,8 +67,6 @@ export const auth = {
 
 export const invitations = {
   create: (body) => post("/api/invitations", body),
-  list: () => get("/api/invitations"),
-  revoke: (id) => del(`/api/invitations/${id}`),
 };
 
 export const patients = {
@@ -97,16 +95,9 @@ export const tasks = {
     patch(`/api/patients/${patientId}/tasks/${taskId}/note`, { note }),
 };
 
-export const users = {
-  list: () => get("/api/users"),
-  update: (id, data) => patch(`/api/users/${id}`, data),
-  resetPassword: (id, newPassword) =>
-    post(`/api/users/${id}/reset-password`, { newPassword }),
-};
-
 // ── Mappers ─────────────────────────────────────────────
 
-export function formatDob(dob) {
+function formatDob(dob) {
   if (!dob) return "";
   const s = typeof dob === "string" ? dob : new Date(dob).toISOString();
   return s.slice(0, 10);
