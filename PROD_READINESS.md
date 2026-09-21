@@ -37,10 +37,6 @@ Items prefixed with **(code)** are in source control; items prefixed with
       Referrer-Policy, Permissions-Policy.
 - [x] **(code)** GitHub Actions CI: lint + test + build + `npm audit` for
       both packages on Node 20 and 22.
-- [x] **(code)** GitHub Actions CD scaffolding: `deploy-containerapp.yml`
-      (Container Apps), `deploy-backend.yml` (App Service) and
-      `deploy-frontend.yml` (Static Web Apps), manually-triggered until secrets
-      are wired and the `push` trigger is enabled.
 - [x] **(code)** Production `Dockerfile` for the API (Node 20, non-root user,
       healthcheck) + `.dockerignore`.
 - [x] **(code)** Production-safe first-admin bootstrap (`npm run create-admin`)
@@ -58,12 +54,10 @@ Items prefixed with **(code)** are in source control; items prefixed with
 - [ ] **(ops)** Rotate the live Resend API key.
 - [ ] **(ops)** Regenerate `JWT_SECRET` (64 bytes hex).
 - [ ] **(ops)** Store the new values in **Azure Key Vault** and grant the app's
-      managed identity read access. Rotation steps:
-      [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#secret-rotation).
+      managed identity **Key Vault Secrets User**. After rotating a secret,
+      restart the Container App revision so replicas pick up the new value.
 
 ### Azure infrastructure
-
-Provisioning commands: [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 - [ ] **(ops)** Create Azure Database for PostgreSQL Flexible Server with
       SSL required and public access disabled.

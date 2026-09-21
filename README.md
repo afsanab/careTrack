@@ -10,8 +10,7 @@ A HIPAA-compliant clinical workflow system for managing patient admissions and p
 careTrack/
 ├── admissions-app/        # React frontend (Vite)
 ├── caretrack-backend/     # Node.js API (Express + Postgres)
-├── .github/workflows/     # CI/CD pipelines
-└── docs/                  # Deployment guide
+└── .github/workflows/     # CI (lint, test, build)
 ```
 
 ---
@@ -92,9 +91,7 @@ npm run create-admin
 
 ---
 
-## CI/CD
+## CI
 
-Automated workflows run on every push:
-- **CI:** Lint, test, build, security audit (Node 20 & 22)
-- **CD:** Manual deploy to Azure (backend + frontend)
+GitHub Actions runs lint, test, build, and a security audit on every push (Node 20 and 22). Azure resources are created and updated in the Azure Portal.
 

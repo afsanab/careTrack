@@ -1,6 +1,6 @@
 # CareTrack API
 
-Express + PostgreSQL. Local setup and demo logins are in the [project README](../README.md). Azure deploy is in [`docs/DEPLOYMENT.md`](../docs/DEPLOYMENT.md).
+Express + PostgreSQL. Local setup and demo logins are in the [project README](../README.md).
 
 ```
 src/server.js          entry
