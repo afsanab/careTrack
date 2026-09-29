@@ -1,6 +1,6 @@
 # CareTrack
 
-A HIPAA-compliant clinical workflow system for managing patient admissions and physician tasks in skilled nursing facilities.
+A HIPAA-compliant clinical workflow system for managing patient admissions and physician tasks in medical facilities.
 
 ---
 
