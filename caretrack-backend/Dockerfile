@@ -16,6 +16,7 @@ COPY --chown=node:node --from=deps /app/node_modules ./node_modules
 COPY --chown=node:node package.json package-lock.json ./
 COPY --chown=node:node src ./src
 COPY --chown=node:node migrations ./migrations
+RUN mkdir -p /app/logs && chown node:node /app/logs
 
 USER node
 

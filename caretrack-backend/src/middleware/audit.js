@@ -18,21 +18,33 @@ const env = require("../config");
 const { query } = require("../db/pool");
 
 const logDir = path.join(__dirname, "../../logs");
-if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
+let canWriteFiles = false;
+try {
+  fs.mkdirSync(logDir, { recursive: true });
+  canWriteFiles = true;
+} catch (err) {
+  console.error("[audit] local log directory unavailable:", err.message);
+}
 
-const transports = [
-  new winston.transports.File({
-    filename: path.join(logDir, "audit.log"),
-    maxsize: 10 * 1024 * 1024,
-    maxFiles: 90,
-    tailable: true,
-  }),
-];
+const transports = [];
+if (canWriteFiles) {
+  transports.push(
+    new winston.transports.File({
+      filename: path.join(logDir, "audit.log"),
+      maxsize: 10 * 1024 * 1024,
+      maxFiles: 90,
+      tailable: true,
+    })
+  );
+}
 
-if (env.NODE_ENV !== "production" && env.NODE_ENV !== "test") {
+if (env.NODE_ENV !== "test") {
   transports.push(
     new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), winston.format.simple()),
+      format:
+        env.NODE_ENV === "production"
+          ? winston.format.combine(winston.format.timestamp(), winston.format.json())
+          : winston.format.combine(winston.format.colorize(), winston.format.simple()),
     })
   );
 }
