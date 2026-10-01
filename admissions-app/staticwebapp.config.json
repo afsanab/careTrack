@@ -1,7 +1,8 @@
 {
   "mimeTypes": {
-    ".js": "text/javascript",
-    ".mjs": "text/javascript",
+    ".js": "application/javascript",
+    ".mjs": "application/javascript",
+    ".jsx": "application/javascript",
     ".css": "text/css",
     ".json": "application/json",
     ".svg": "image/svg+xml",
