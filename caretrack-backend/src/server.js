@@ -42,9 +42,10 @@ app.use(
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin && env.NODE_ENV !== "production") return cb(null, true);
+      // No Origin: curl, health probes, and typing the API URL in a browser.
+      if (!origin) return cb(null, true);
       if (env.ALLOWED_ORIGINS_LIST.includes(origin)) return cb(null, true);
-      cb(new Error(`CORS: origin '${origin}' not allowed`));
+      cb(null, false);
     },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
