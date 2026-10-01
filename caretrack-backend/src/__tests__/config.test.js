@@ -46,6 +46,31 @@ describe("config / env validation", () => {
     ]);
   });
 
+  it("uses SameSite=None in production when cookies cannot be first-party", async () => {
+    const secret = "x".repeat(64);
+    const mod = await loadConfigWithEnv({
+      NODE_ENV: "production",
+      JWT_SECRET: secret,
+      APP_PUBLIC_URL: "https://app.example.com",
+      ALLOWED_ORIGINS: "https://app.example.com",
+      DATABASE_URL: "postgresql://u:p@h:5432/db?sslmode=require",
+    });
+    expect(mod.default.COOKIE_SAMESITE).toBe("none");
+  });
+
+  it("keeps SameSite=Lax in production when COOKIE_DOMAIN is set", async () => {
+    const secret = "x".repeat(64);
+    const mod = await loadConfigWithEnv({
+      NODE_ENV: "production",
+      JWT_SECRET: secret,
+      APP_PUBLIC_URL: "https://app.example.com",
+      ALLOWED_ORIGINS: "https://app.example.com",
+      DATABASE_URL: "postgresql://u:p@h:5432/db?sslmode=require",
+      COOKIE_DOMAIN: ".example.com",
+    });
+    expect(mod.default.COOKIE_SAMESITE).toBe("lax");
+  });
+
   it("rejects a short JWT_SECRET", async () => {
     await expect(
       loadConfigWithEnv({ JWT_SECRET: "too-short", NODE_ENV: "production" })

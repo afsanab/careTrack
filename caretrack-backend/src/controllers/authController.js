@@ -6,6 +6,7 @@ const { auditLog } = require("../middleware/audit");
 const { hashToken } = require("./invitationsController");
 const {
   setSessionCookies,
+  readOrIssueCsrf,
   clearSessionCookies,
 } = require("../services/session");
 const {
@@ -109,7 +110,7 @@ async function login(req, res, next) {
     await registerSuccess(user.username);
     await recordAttempt({ username, ip, outcome: "SUCCESS" });
 
-    const { expiresIn } = setSessionCookies(res, user);
+    const { expiresIn, csrfToken } = setSessionCookies(res, user);
 
     auditLog({
       action: "LOGIN_SUCCESS",
@@ -129,6 +130,7 @@ async function login(req, res, next) {
         mustChangePassword: user.must_change_password === true,
       },
       expiresIn,
+      csrfToken,
     });
   } catch (err) {
     next(err);
@@ -168,6 +170,7 @@ async function me(req, res, next) {
       return res.status(401).json({ error: "User not found or disabled." });
     }
     const row = result.rows[0];
+    const csrfToken = readOrIssueCsrf(req, res);
     res.json({
       user: {
         id: row.id,
@@ -177,6 +180,7 @@ async function me(req, res, next) {
         lastLoginAt: row.last_login_at,
         mustChangePassword: row.must_change_password === true,
       },
+      csrfToken,
     });
   } catch (err) {
     next(err);
@@ -292,7 +296,7 @@ async function registerWithInvite(req, res, next) {
     }
 
     const user = userRow.user;
-    const { expiresIn } = setSessionCookies(res, user);
+    const { expiresIn, csrfToken } = setSessionCookies(res, user);
 
     auditLog({
       action: "REGISTER_INVITE_SUCCESS",
@@ -312,6 +316,7 @@ async function registerWithInvite(req, res, next) {
         mustChangePassword: false,
       },
       expiresIn,
+      csrfToken,
     });
   } catch (err) {
     next(err);

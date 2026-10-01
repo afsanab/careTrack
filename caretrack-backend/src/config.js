@@ -127,4 +127,12 @@ if (env.NODE_ENV === "production") {
 
 env.ALLOWED_ORIGINS_LIST = env.ALLOWED_ORIGINS.split(",").map((s) => s.trim()).filter(Boolean);
 
+// Split-host production (SPA on Static Web Apps, API on Container Apps) is
+// cross-site. SameSite=Lax cookies are not sent on those POSTs, and the SPA
+// cannot read a CSRF cookie set on the API host. Default to None unless the
+// operator has set COOKIE_DOMAIN for a shared parent domain.
+if (env.NODE_ENV === "production" && env.COOKIE_SAMESITE === "lax" && !env.COOKIE_DOMAIN) {
+  env.COOKIE_SAMESITE = "none";
+}
+
 module.exports = env;

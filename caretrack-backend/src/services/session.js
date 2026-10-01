@@ -2,9 +2,9 @@
  * Session cookie + CSRF token helpers.
  *
  * `setSessionCookies` writes:
- *   - an httpOnly Secure SameSite session cookie carrying the JWT
- *   - a non-httpOnly CSRF cookie the SPA reads and echoes back in
- *     `X-CSRF-Token` on state-changing requests (double-submit pattern)
+ *   - an httpOnly Secure session cookie carrying the JWT
+ *   - a non-httpOnly CSRF cookie, also returned in JSON and `X-CSRF-Token`
+ *     so a cross-origin SPA can echo it on state-changing requests
  */
 
 const crypto = require("crypto");
@@ -34,30 +34,58 @@ function parseExpiresInMs(spec) {
   return n * mult;
 }
 
-function setSessionCookies(res, user) {
-  const token = signSessionJwt(user);
-  const csrfToken = crypto.randomBytes(32).toString("hex");
-  const maxAge = parseExpiresInMs(env.JWT_EXPIRES_IN);
-
+function cookieBaseOptions() {
   const isProd = env.NODE_ENV === "production";
-  const baseOptions = {
+  return {
     sameSite: env.COOKIE_SAMESITE,
     secure: isProd || env.COOKIE_SAMESITE === "none",
     domain: env.COOKIE_DOMAIN || undefined,
     path: "/",
-    maxAge,
+  };
+}
+
+function attachCsrfHeader(res, csrfToken) {
+  res.set("X-CSRF-Token", csrfToken);
+  return csrfToken;
+}
+
+function setSessionCookies(res, user) {
+  const token = signSessionJwt(user);
+  const csrfToken = crypto.randomBytes(32).toString("hex");
+  const baseOptions = {
+    ...cookieBaseOptions(),
+    maxAge: parseExpiresInMs(env.JWT_EXPIRES_IN),
   };
 
   res.cookie(env.COOKIE_NAME, token, { ...baseOptions, httpOnly: true });
   res.cookie(env.CSRF_COOKIE_NAME, csrfToken, { ...baseOptions, httpOnly: false });
+  attachCsrfHeader(res, csrfToken);
 
   return { token, csrfToken, expiresIn: env.JWT_EXPIRES_IN };
 }
 
+/**
+ * SPA hosts on a different site (e.g. Azure Static Web Apps) cannot read
+ * the CSRF cookie via document.cookie. Return the existing cookie value, or
+ * mint one if the session cookie survived without it.
+ */
+function readOrIssueCsrf(req, res) {
+  let csrfToken = req.cookies?.[env.CSRF_COOKIE_NAME];
+  if (!csrfToken) {
+    csrfToken = crypto.randomBytes(32).toString("hex");
+    res.cookie(env.CSRF_COOKIE_NAME, csrfToken, {
+      ...cookieBaseOptions(),
+      httpOnly: false,
+      maxAge: parseExpiresInMs(env.JWT_EXPIRES_IN),
+    });
+  }
+  return attachCsrfHeader(res, csrfToken);
+}
+
 function clearSessionCookies(res) {
-  const opts = { path: "/", domain: env.COOKIE_DOMAIN || undefined };
+  const opts = cookieBaseOptions();
   res.clearCookie(env.COOKIE_NAME, opts);
   res.clearCookie(env.CSRF_COOKIE_NAME, opts);
 }
 
-module.exports = { setSessionCookies, clearSessionCookies };
+module.exports = { setSessionCookies, readOrIssueCsrf, clearSessionCookies };

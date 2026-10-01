@@ -2,8 +2,12 @@
  * CareTrack API client.
  *
  * Auth: the backend issues an httpOnly session cookie on login/register, plus
- * a non-httpOnly CSRF cookie that we echo back as the `X-CSRF-Token` header
- * on every state-changing request (double-submit cookie pattern).
+ * a CSRF token (cookie + JSON/`X-CSRF-Token` header). We echo that value back
+ * as the `X-CSRF-Token` header on every state-changing request (double-submit).
+ *
+ * The token is kept in memory because a cross-origin API host (Azure Container
+ * Apps vs Static Web Apps) will not expose its cookies to document.cookie.
+ * Same-origin / Vite-proxy local dev still falls back to the readable cookie.
  *
  * No JWT is stored in JS land. Session lifetime is controlled by the
  * server-set cookie expiration; `auth.me()` is used to detect whether the
@@ -13,16 +17,28 @@ import { getActiveTasks } from "./taskLogic.js";
 
 const BASE = import.meta.env.VITE_API_BASE || "";
 
+let csrfToken = null;
+
 function readCsrfCookie() {
   const m = document.cookie.match(/(?:^|;\s*)caretrack_csrf=([^;]+)/);
   return m ? decodeURIComponent(m[1]) : null;
+}
+
+function rememberCsrf(res, data) {
+  const header = res.headers.get("X-CSRF-Token");
+  if (header) csrfToken = header;
+  if (data?.csrfToken) csrfToken = data.csrfToken;
+}
+
+function currentCsrf() {
+  return csrfToken || readCsrfCookie();
 }
 
 async function request(method, path, body) {
   const headers = { "Content-Type": "application/json" };
   const isUnsafe = !["GET", "HEAD", "OPTIONS"].includes(method);
   if (isUnsafe) {
-    const csrf = readCsrfCookie();
+    const csrf = currentCsrf();
     if (csrf) headers["X-CSRF-Token"] = csrf;
   }
 
@@ -39,6 +55,7 @@ async function request(method, path, body) {
   } catch {
     data = null;
   }
+  rememberCsrf(res, data);
 
   if (!res.ok) {
     const err = new Error(data?.error || `HTTP ${res.status}`);
@@ -57,7 +74,13 @@ const del = (path) => request("DELETE", path);
 
 export const auth = {
   login: (username, password) => post("/api/auth/login", { username, password }),
-  logout: () => post("/api/auth/logout"),
+  logout: async () => {
+    try {
+      return await post("/api/auth/logout");
+    } finally {
+      csrfToken = null;
+    }
+  },
   me: () => get("/api/auth/me"),
   inviteInfo: (token) => get(`/api/auth/invite-info?token=${encodeURIComponent(token)}`),
   register: (body) => post("/api/auth/register", body),

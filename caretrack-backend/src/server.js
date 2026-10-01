@@ -49,7 +49,7 @@ app.use(
     },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "X-CSRF-Token"],
-    exposedHeaders: ["Retry-After"],
+    exposedHeaders: ["Retry-After", "X-CSRF-Token"],
     credentials: true,
   })
 );
