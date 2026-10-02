@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "./App.css";
 import {
   loadPatientsAndTasks,
@@ -46,6 +46,7 @@ export default function App() {
   const [deletingPending, setDeletingPending] = useState(false);
   const [showPwModal, setShowPwModal] = useState(false);
   const [pwForced, setPwForced] = useState(false);
+  const noteSaveGen = useRef(new Map());
 
   const reportError = useCallback((msg) => {
     const m = typeof msg === "string" && msg.trim() ? msg.trim() : "Something went wrong.";
@@ -192,7 +193,19 @@ export default function App() {
     await syncTaskRowsForPatient(patientId, admission.admitTs);
     const { tasks: trows } = await tasksApi.list(patientId);
     const m = apiTasksToSavedMap(trows);
-    setTaskState((prev) => ({ ...prev, [patientId]: { ...prev[patientId], ...m } }));
+    setTaskState((prev) => {
+      const local = prev[patientId] || {};
+      const next = { ...local };
+      for (const [id, row] of Object.entries(m)) {
+        next[id] = {
+          ...row,
+          ...local[id],
+          apiTaskId: row.apiTaskId || local[id]?.apiTaskId,
+          note: local[id]?.note ?? row.note,
+        };
+      }
+      return { ...prev, [patientId]: next };
+    });
     return m[taskId]?.apiTaskId;
   }
 
@@ -294,18 +307,11 @@ export default function App() {
     }
   }
 
-  function revertPatientTaskNote(patientId, taskId, noteValue) {
-    setTaskState((prevState) => ({
-      ...prevState,
-      [patientId]: {
-        ...(prevState[patientId] || {}),
-        [taskId]: { ...(prevState[patientId]?.[taskId] || {}), note: noteValue },
-      },
-    }));
-  }
-
   async function updateNote(patientId, taskId, note) {
-    const previousNote = taskState[patientId]?.[taskId]?.note ?? "";
+    const key = `${patientId}:${taskId}`;
+    const gen = (noteSaveGen.current.get(key) || 0) + 1;
+    noteSaveGen.current.set(key, gen);
+
     setTaskState((prev) => ({
       ...prev,
       [patientId]: {
@@ -315,14 +321,14 @@ export default function App() {
     }));
     try {
       const tid = await ensureTaskApiId(patientId, taskId);
+      if (noteSaveGen.current.get(key) !== gen) return;
       if (!tid) {
-        revertPatientTaskNote(patientId, taskId, previousNote);
         reportError("Could not synchronize task.");
         return;
       }
       await tasksApi.updateNote(patientId, tid, note);
     } catch (e) {
-      revertPatientTaskNote(patientId, taskId, previousNote);
+      if (noteSaveGen.current.get(key) !== gen) return;
       reportError(e.message || "Could not save note.");
     }
   }

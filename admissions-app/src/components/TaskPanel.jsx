@@ -1,8 +1,10 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { fmtDate, titleCaseText } from "../formatters.js";
 import Label from "./Label.jsx";
 import ModalShell from "./ModalShell.jsx";
 import { C } from "../theme/colors.js";
+
+const NOTE_SAVE_MS = 600;
 
 export default function TaskPanel({ admission, activeTasks, onClose, onAssign, onComplete, onUpdateNote, role }) {
   const titleId = useId();
@@ -18,6 +20,46 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
   const isOverdue = daysUntilDue !== null && daysUntilDue < 0;
   const isDueSoon = daysUntilDue !== null && daysUntilDue >= 0 && daysUntilDue <= 3;
 
+  const savedNote = task?.note ?? "";
+  const taskId = task?.id;
+  const [noteDraft, setNoteDraft] = useState(savedNote);
+  const onUpdateNoteRef = useRef(onUpdateNote);
+
+  useEffect(() => {
+    onUpdateNoteRef.current = onUpdateNote;
+  }, [onUpdateNote]);
+
+  useEffect(() => {
+    setNoteDraft(savedNote);
+  }, [taskId]);
+
+  function flushNote(id, text, saved) {
+    if (!id || text === saved) return;
+    void onUpdateNoteRef.current(admission.id, id, text);
+  }
+
+  useEffect(() => {
+    if (!taskId) return;
+    if (noteDraft === savedNote) return;
+    const handle = window.setTimeout(() => {
+      flushNote(taskId, noteDraft, savedNote);
+    }, NOTE_SAVE_MS);
+    return () => window.clearTimeout(handle);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteDraft, savedNote, taskId, admission.id]);
+
+  function handleClose() {
+    flushNote(taskId, noteDraft, savedNote);
+    onClose();
+  }
+
+  function selectTask(nextId) {
+    if (taskId && nextId !== taskId) {
+      flushNote(taskId, noteDraft, savedNote);
+    }
+    setActiveId(nextId);
+  }
+
   async function runMutation(fn) {
     setBusy(true);
     try {
@@ -28,7 +70,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
   }
 
   return (
-    <ModalShell labelledById={titleId} overlayClassName="ct-modal-overlay ct-modal-overlay--dark" className="ct-modal ct-modal--wide" onBackdropClick={onClose}>
+    <ModalShell labelledById={titleId} overlayClassName="ct-modal-overlay ct-modal-overlay--dark" className="ct-modal ct-modal--wide" onBackdropClick={handleClose}>
       <div style={{ background: C.navy, padding: "18px 22px", display: "flex", justifyContent: "space-between", alignItems: "center", flexShrink: 0 }}>
         <div>
           <div id={titleId} style={{ color: "#fff", fontWeight: 700, fontSize: 16 }}>
@@ -38,7 +80,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
             {titleCaseText(admission.last)}, {titleCaseText(admission.first)}
           </div>
         </div>
-        <button type="button" aria-label="Close task panel" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.08)", cursor: "pointer", fontSize: 16, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <button type="button" aria-label="Close task panel" onClick={handleClose} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.08)", cursor: "pointer", fontSize: 16, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <span aria-hidden="true">X</span>
         </button>
       </div>
@@ -54,7 +96,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
               <button
                 key={t.id}
                 type="button"
-                onClick={() => setActiveId(t.id)}
+                onClick={() => selectTask(t.id)}
                 style={{
                   padding: "12px 18px",
                   border: "none",
@@ -155,8 +197,9 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
               <Label htmlFor={noteFieldId}>{isAdmin ? "Instructions for Physician" : `${task.label} Notes`}</Label>
               <textarea
                 id={noteFieldId}
-                value={task.note}
-                onChange={(e) => void onUpdateNote(admission.id, task.id, e.target.value)}
+                value={noteDraft}
+                onChange={(e) => setNoteDraft(e.target.value)}
+                onBlur={() => flushNote(taskId, noteDraft, savedNote)}
                 disabled={task.status === "completed" && isPhysician}
                 placeholder={isAdmin ? `Add instructions for the ${task.label}...` : task.note ? "" : "No instructions yet."}
                 style={{

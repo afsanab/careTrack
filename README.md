@@ -2,6 +2,12 @@
 
 A HIPAA-compliant clinical workflow system for managing patient admissions and physician tasks in medical facilities.
 
+## UI walkthrough
+
+A short tour of the app: admissions, census filters, physician tasks, and inviting staff.
+
+![CareTrack UI walkthrough](caretrackui.mp4)
+
 ---
 
 ## Project Structure
@@ -94,4 +100,3 @@ npm run create-admin
 ## CI
 
 GitHub Actions runs lint, test, build, and a security audit on every push (Node 20 and 22). Pushing `admissions-app` deploys Azure Static Web Apps. The API is updated in the Azure Portal.
-
