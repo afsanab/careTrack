@@ -6,7 +6,7 @@ A HIPAA-compliant clinical workflow system for managing patient admissions and p
 
 A short tour of the app: admissions, census filters, physician tasks, and inviting staff. Click the image to watch on YouTube.
 
-![CareTrack UI walkthrough](https://img.youtube.com/vi/6kJ9ejD63v0/hqdefault.jpg)
+[![CareTrack UI walkthrough](https://img.youtube.com/vi/6kJ9ejD63v0/hqdefault.jpg)](https://youtu.be/6kJ9ejD63v0)
 
 ---
 
