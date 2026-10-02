@@ -10,7 +10,9 @@ const FOCUSABLE =
  */
 export function useModalA11y(enabled, panelRef, onClose) {
   const onCloseRef = useRef(onClose);
-  onCloseRef.current = onClose;
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!enabled) return;
