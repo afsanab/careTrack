@@ -93,5 +93,5 @@ npm run create-admin
 
 ## CI
 
-GitHub Actions runs lint, test, build, and a security audit on every push (Node 20 and 22). Azure resources are created and updated in the Azure Portal.
+GitHub Actions runs lint, test, build, and a security audit on every push (Node 20 and 22). Pushing `admissions-app` deploys Azure Static Web Apps. Pushing `caretrack-backend` deploys Azure Container Apps (see `.github/workflows/deploy-containerapp.yml` for the required secrets and variables).
 
