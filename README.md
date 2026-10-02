@@ -4,9 +4,9 @@ A HIPAA-compliant clinical workflow system for managing patient admissions and p
 
 ## UI walkthrough
 
-A short tour of the app: admissions, census filters, physician tasks, and inviting staff.
+A short tour of the app: admissions, census filters, physician tasks, and inviting staff. Click the image to watch on YouTube.
 
-![CareTrack UI walkthrough](caretrackui.mp4)
+![CareTrack UI walkthrough](https://img.youtube.com/vi/6kJ9ejD63v0/hqdefault.jpg)
 
 ---
 
@@ -20,6 +20,8 @@ careTrack/
 ```
 
 ---
+
+
 
 ## Quick Start
 
@@ -37,6 +39,8 @@ npm run seed              # Optional: creates demo data
 npm run dev               # Starts on http://localhost:3001
 ```
 
+
+
 ### 2. Frontend Setup
 
 ```bash
@@ -48,6 +52,8 @@ npm run dev              # Starts on http://localhost:5173
 **Demo Accounts:** After seeding, log in with `dr.smith`, `dr.patel`, `admin`, or `j.garcia` using the password you set in `SEED_DEMO_PASSWORD`.
 
 ---
+
+
 
 ## Tech Stack
 
@@ -61,9 +67,14 @@ npm run dev              # Starts on http://localhost:5173
 
 ---
 
+
+
 ## Key Features
 
+
+
 ### Security & Compliance
+
 - JWT authentication with httpOnly cookies and CSRF protection
 - Account lockout after failed login attempts
 - Comprehensive audit logging (all PHI access tracked)
@@ -72,7 +83,10 @@ npm run dev              # Starts on http://localhost:5173
 - SSL/TLS enforcement for database connections
 - Optional Azure Blob Storage for immutable audit logs
 
+
+
 ### Clinical Workflow
+
 - Patient admissions tracking
 - Physician task management
 - Multi-facility support
@@ -81,21 +95,31 @@ npm run dev              # Starts on http://localhost:5173
 
 ---
 
+
+
 ## Development
 
+
+
 ### Run Tests
+
 ```bash
 npm test                 # Run all tests
 npm run lint             # Lint frontend code
 ```
 
+
+
 ### Create Admin User
+
 ```bash
 cd caretrack-backend
 npm run create-admin
 ```
 
 ---
+
+
 
 ## CI
 
