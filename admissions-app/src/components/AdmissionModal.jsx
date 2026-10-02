@@ -46,7 +46,10 @@ export default function AdmissionModal({ admission, onSave, onClose }) {
     try {
       await onSave(form);
     } catch (e) {
-      setErr(e.message || "Could not save admission.");
+      const details = Array.isArray(e.issues)
+        ? e.issues.map((i) => i.message).filter(Boolean).join(" ")
+        : "";
+      setErr(details || e.message || "Could not save admission.");
     } finally {
       setSaving(false);
     }

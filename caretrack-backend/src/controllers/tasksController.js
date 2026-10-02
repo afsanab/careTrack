@@ -10,7 +10,7 @@ async function listTasks(req, res, next) {
       [patientId]
     );
     if (!patient.rows[0]) return res.status(404).json({ error: "Patient not found." });
-    if (req.user.role === "physician" && patient.rows[0].physician_username !== req.user.username) {
+    if (req.user.role === "physician" && (patient.rows[0].physician_username || "").toLowerCase() !== req.user.username.toLowerCase()) {
       return res.status(403).json({ error: "Access denied." });
     }
 
@@ -111,7 +111,7 @@ async function completeTask(req, res, next) {
       return res.status(404).json({ error: "Task not found or already completed." });
     }
 
-    if (existing.rows[0].physician_username !== req.user.username) {
+    if ((existing.rows[0].physician_username || "").toLowerCase() !== req.user.username.toLowerCase()) {
       return res.status(403).json({ error: "Access denied." });
     }
     if (!existing.rows[0].assigned_at) {

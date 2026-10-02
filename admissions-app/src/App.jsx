@@ -11,7 +11,7 @@ import {
   tasks as tasksApi,
 } from "./api.js";
 import { getActiveTasks, mergeTaskState } from "./taskLogic.js";
-import { capitalize, formatPhysicianDisplay } from "./formatters.js";
+import { capitalize, formatPhysicianDisplay, uniqueCi, sameCi, titleCaseText } from "./formatters.js";
 import { C } from "./theme/colors.js";
 import AcceptInviteScreen from "./components/AcceptInviteScreen.jsx";
 import AdmissionCard from "./components/AdmissionCard.jsx";
@@ -137,8 +137,8 @@ export default function App() {
   if (!user) return <AuthScreen onLogin={handleLogin} />;
 
   const canEdit = user.role === "admin";
-  const physicianList = [...new Set(admissions.map(a => a.physician).filter(Boolean))].sort();
-  const locationList = [...new Set(admissions.map(a => a.location).filter(Boolean))].sort();
+  const physicianList = uniqueCi(admissions.map((a) => a.physician));
+  const locationList = uniqueCi(admissions.map((a) => a.location));
 
   function getPatientTasks(admission) {
     if (!admission.admitTs || admission.status !== "inhouse") return null;
@@ -149,8 +149,8 @@ export default function App() {
 
   const filtered = admissions.filter(a => {
     if (filter !== "all" && a.status !== filter) return false;
-    if (physicianFilter !== "all" && a.physician !== physicianFilter) return false;
-    if (locationFilter !== "all" && a.location !== locationFilter) return false;
+    if (physicianFilter !== "all" && !sameCi(a.physician, physicianFilter)) return false;
+    if (locationFilter !== "all" && !sameCi(a.location, locationFilter)) return false;
     if (taskFilter !== "all") {
       const t = getPatientTasks(a);
       if (!t) return false;
@@ -480,7 +480,7 @@ export default function App() {
       {deletePendingId && deletePendingAdmission && (
         <ConfirmDialog
           title="Remove this admission?"
-          message={`${deletePendingAdmission.last}, ${deletePendingAdmission.first} will be removed from the pending list.`}
+          message={`${titleCaseText(deletePendingAdmission.last)}, ${titleCaseText(deletePendingAdmission.first)} will be removed from the pending list.`}
           confirmLabel="Remove"
           destructive
           busy={deletingPending}

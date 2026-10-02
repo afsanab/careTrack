@@ -3,6 +3,7 @@
  */
 
 const { z } = require("zod");
+const { titleCaseText } = require("./text");
 
 const UUID = z.string().uuid();
 
@@ -25,19 +26,31 @@ const Status = z.enum(["pending", "inhouse", "discharged"]);
 
 const Iso = z.string().datetime({ offset: true });
 
-const optionalShort = z.string().trim().max(120).nullish().transform((v) => (v ? v : null));
+const optionalShort = z.string().trim().max(120).nullish().transform((v) => (v ? titleCaseText(v) : null));
 const optionalLong = z.string().trim().max(2000).nullish().transform((v) => (v ? v : null));
 
+/** Attending physician on a patient: login id (dr.smith) or a display name (Dr. Smith). */
+const optionalPhysician = z
+  .string()
+  .trim()
+  .max(80)
+  .nullish()
+  .transform((v) => {
+    if (!v) return null;
+    if (/^[a-z0-9._-]+$/i.test(v)) return v.toLowerCase();
+    return titleCaseText(v);
+  });
+
 const PatientCreate = z.object({
-  firstName: z.string().trim().min(1, "First name is required.").max(80),
-  lastName: z.string().trim().min(1, "Last name is required.").max(80),
+  firstName: z.string().trim().min(1, "First name is required.").max(80).transform(titleCaseText),
+  lastName: z.string().trim().min(1, "Last name is required.").max(80).transform(titleCaseText),
   dob: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "DOB must be YYYY-MM-DD."),
   room: optionalShort,
   arrivalAt: Iso.nullish().transform((v) => v || null),
-  diagnosis: optionalLong,
+  diagnosis: z.string().trim().max(2000).nullish().transform((v) => (v ? titleCaseText(v) : null)),
   notes: optionalLong,
   status: Status.exclude(["discharged"]).default("pending"),
-  physicianUsername: Username.nullish().transform((v) => v || null),
+  physicianUsername: optionalPhysician,
   location: optionalShort,
 });
 
@@ -45,7 +58,7 @@ const PatientUpdate = PatientCreate.partial();
 
 const PatientListQuery = z.object({
   status: Status.optional(),
-  physician: Username.optional(),
+  physician: optionalPhysician,
   location: z.string().trim().max(120).optional(),
   page: z.coerce.number().int().min(1).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(50),

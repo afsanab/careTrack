@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { fmtDate } from "../formatters.js";
+import { fmtDate, titleCaseText } from "../formatters.js";
 import Label from "./Label.jsx";
 import ModalShell from "./ModalShell.jsx";
 import { C } from "../theme/colors.js";
@@ -35,7 +35,7 @@ export default function TaskPanel({ admission, activeTasks, onClose, onAssign, o
             Clinical Tasks
           </div>
           <div style={{ color: "rgba(255,255,255,0.55)", fontSize: 12, marginTop: 2 }}>
-            {admission.last}, {admission.first}
+            {titleCaseText(admission.last)}, {titleCaseText(admission.first)}
           </div>
         </div>
         <button type="button" aria-label="Close task panel" onClick={onClose} style={{ width: 32, height: 32, borderRadius: 8, border: "1px solid rgba(255,255,255,0.2)", background: "rgba(255,255,255,0.08)", cursor: "pointer", fontSize: 16, color: "#fff", display: "flex", alignItems: "center", justifyContent: "center" }}>

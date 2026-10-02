@@ -77,6 +77,37 @@ describe("validation schemas", () => {
       const r = S.PatientCreate.safeParse({ ...base, status: "discharged" });
       expect(r.success).toBe(false);
     });
+
+    it("accepts a display-name attending physician", () => {
+      const r = S.PatientCreate.safeParse({ ...base, physicianUsername: "Dr. Smith" });
+      expect(r.success).toBe(true);
+      expect(r.data.physicianUsername).toBe("Dr. Smith");
+    });
+
+    it("still normalises login-style physician ids", () => {
+      const r = S.PatientCreate.safeParse({ ...base, physicianUsername: "DR.Smith" });
+      expect(r.success).toBe(true);
+      expect(r.data.physicianUsername).toBe("dr.smith");
+    });
+
+    it("title-cases names and facility regardless of input case", () => {
+      const r = S.PatientCreate.safeParse({
+        firstName: "ADA",
+        lastName: "o'brien",
+        dob: "1815-12-10",
+        location: "sunrise CARE center",
+        room: "214-a",
+        physicianUsername: "dr smith",
+        diagnosis: "chest pain",
+      });
+      expect(r.success).toBe(true);
+      expect(r.data.firstName).toBe("Ada");
+      expect(r.data.lastName).toBe("O'Brien");
+      expect(r.data.location).toBe("Sunrise Care Center");
+      expect(r.data.room).toBe("214-A");
+      expect(r.data.physicianUsername).toBe("Dr. Smith");
+      expect(r.data.diagnosis).toBe("Chest Pain");
+    });
   });
 
   describe("PatientListQuery", () => {

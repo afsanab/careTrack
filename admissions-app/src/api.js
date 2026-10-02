@@ -14,6 +14,7 @@
  * cookie is still valid on app boot.
  */
 import { getActiveTasks } from "./taskLogic.js";
+import { titleCaseText } from "./formatters.js";
 
 const BASE = import.meta.env.VITE_API_BASE || "";
 
@@ -150,17 +151,22 @@ export function patientRowToAdmission(p) {
 }
 
 export function admissionToApiBody(form) {
+  const physician = form.physician?.trim() || "";
   return {
-    firstName: form.first.trim(),
-    lastName: form.last.trim(),
+    firstName: titleCaseText(form.first),
+    lastName: titleCaseText(form.last),
     dob: form.dob,
-    room: form.room || null,
+    room: form.room?.trim() ? titleCaseText(form.room) : null,
     arrivalAt: form.arrival ? new Date(form.arrival).toISOString() : null,
-    diagnosis: form.dx || null,
-    notes: form.notes || null,
+    diagnosis: form.dx?.trim() ? titleCaseText(form.dx) : null,
+    notes: form.notes?.trim() || null,
     status: form.status,
-    physicianUsername: form.physician?.trim() || null,
-    location: form.location || null,
+    physicianUsername: !physician
+      ? null
+      : /^[a-z0-9._-]+$/i.test(physician)
+        ? physician.toLowerCase()
+        : titleCaseText(physician),
+    location: form.location?.trim() ? titleCaseText(form.location) : null,
   };
 }
 

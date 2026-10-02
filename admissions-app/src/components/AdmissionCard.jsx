@@ -1,4 +1,4 @@
-import { fmtAge, fmtArrival, formatPhysicianDisplay } from "../formatters.js";
+import { fmtAge, fmtArrival, formatPhysicianDisplay, titleCaseText } from "../formatters.js";
 import TaskPills from "./TaskPills.jsx";
 import { C } from "../theme/colors.js";
 
@@ -94,11 +94,11 @@ export default function AdmissionCard({
 
       <div style={{ padding: "14px 16px", flex: 1 }}>
         <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 2 }}>
-          {admission.last}, {admission.first}
+          {titleCaseText(admission.last)}, {titleCaseText(admission.first)}
         </div>
         <div style={{ fontSize: 12, color: C.muted, marginBottom: 12, fontFamily: "monospace" }}>{fmtAge(admission.dob)}</div>
         <div className="ct-card-info">
-          {[["Room", admission.room || "—"]].map(([l, v]) => (
+          {[["Room", admission.room ? titleCaseText(admission.room) : "—"]].map(([l, v]) => (
             <div key={l} className="ct-card-info__cell">
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: C.light, marginBottom: 2 }}>
                 {l}
@@ -109,7 +109,7 @@ export default function AdmissionCard({
           {admission.location && (
             <div className="ct-card-info__cell">
               <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: C.light, marginBottom: 2 }}>Facility</div>
-              <div style={{ fontSize: 13, fontWeight: 500, wordBreak: "break-word" }}>{admission.location}</div>
+              <div style={{ fontSize: 13, fontWeight: 500, wordBreak: "break-word" }}>{titleCaseText(admission.location)}</div>
             </div>
           )}
           {admission.physician && (
@@ -122,7 +122,7 @@ export default function AdmissionCard({
           )}
           <div className="ct-card-info__cell ct-card-info__cell--full">
             <div style={{ fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", color: C.light, marginBottom: 2 }}>Diagnosis</div>
-            <div style={{ fontSize: 13, fontWeight: 500, wordBreak: "break-word" }}>{admission.dx || "—"}</div>
+            <div style={{ fontSize: 13, fontWeight: 500, wordBreak: "break-word" }}>{admission.dx ? titleCaseText(admission.dx) : "—"}</div>
           </div>
         </div>
         {admission.notes && (

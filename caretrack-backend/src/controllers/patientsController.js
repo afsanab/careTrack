@@ -16,10 +16,10 @@ async function listPatients(req, res, next) {
     let idx = 1;
 
     if (isPhysician) {
-      conditions.push(`p.physician_username = $${idx++}`);
+      conditions.push(`LOWER(p.physician_username) = LOWER($${idx++})`);
       params.push(req.user.username);
     } else if (physician) {
-      conditions.push(`p.physician_username = $${idx++}`);
+      conditions.push(`LOWER(p.physician_username) = LOWER($${idx++})`);
       params.push(physician);
     }
     if (status) {
@@ -27,7 +27,7 @@ async function listPatients(req, res, next) {
       params.push(status);
     }
     if (location) {
-      conditions.push(`p.location = $${idx++}`);
+      conditions.push(`LOWER(p.location) = LOWER($${idx++})`);
       params.push(location);
     }
 
@@ -82,7 +82,7 @@ async function getPatient(req, res, next) {
     if (!result.rows[0]) return res.status(404).json({ error: "Patient not found." });
 
     const patient = result.rows[0];
-    if (req.user.role === "physician" && patient.physician_username !== req.user.username) {
+    if (req.user.role === "physician" && (patient.physician_username || "").toLowerCase() !== req.user.username.toLowerCase()) {
       return res.status(403).json({ error: "Access denied." });
     }
     req.audit("READ_PATIENT", { patientId: id });

@@ -1,6 +1,7 @@
 import { useId } from "react";
 import ModalShell from "./ModalShell.jsx";
 import { C } from "../theme/colors.js";
+import { titleCaseText } from "../formatters.js";
 
 export default function DischargeDialog({ admission, onCancel, onConfirm, confirming }) {
   const titleId = useId();
@@ -25,7 +26,7 @@ export default function DischargeDialog({ admission, onCancel, onConfirm, confir
         Discharge Patient?
       </div>
       <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8 }}>
-        {admission.last}, {admission.first}
+        {titleCaseText(admission.last)}, {titleCaseText(admission.first)}
       </div>
       <div style={{ color: C.muted, fontSize: 13, marginBottom: 24, lineHeight: 1.6 }}>
         This will remove the patient from the active census.<br />All pending tasks will be cancelled.
