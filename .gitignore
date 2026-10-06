@@ -16,6 +16,9 @@ node_modules/
 *.pem
 *.p12
 
+# Internal operational checklist
+/PROD_READINESS.md
+
 # Editor
 *.swp
 *.swo
